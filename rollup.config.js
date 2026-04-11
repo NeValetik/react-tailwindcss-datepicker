@@ -18,6 +18,6 @@ module.exports = {
             inlineDynamicImports: true
         }
     ],
-    external: ["react", "dayjs"],
+    external: [/^react($|\/)/, /^react-dom($|\/)/, "dayjs"],
     plugins: [resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.rollup.json" })]
 };
