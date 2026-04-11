@@ -16,7 +16,7 @@ interface Props {
 const Years = (props: Props) => {
     const { year, currentYear, minYear, maxYear, clickYear } = props;
 
-    const { dateLooking } = useContext(DatepickerContext);
+    const { dateLooking, classNames } = useContext(DatepickerContext);
 
     const date = useMemo(() => {
         let start: number;
@@ -45,22 +45,35 @@ const Years = (props: Props) => {
     }, [dateLooking, year]);
 
     return (
-        <div className="w-full grid grid-cols-2 gap-2 mt-2">
-            {generateArrayNumber(date.start, date.end).map((item, index) => (
-                <RoundedButton
-                    key={index}
-                    padding="py-3"
-                    onClick={() => {
-                        clickYear(item);
-                    }}
-                    active={currentYear === item}
-                    disabled={
-                        (maxYear !== null && item > maxYear) || (minYear !== null && item < minYear)
-                    }
-                >
-                    <>{item}</>
-                </RoundedButton>
-            ))}
+        <div className={classNames?.yearsContainer ?? "w-full grid grid-cols-2 gap-2 mt-2"}>
+            {generateArrayNumber(date.start, date.end).map((item, index) => {
+                const isCurrent = currentYear === item;
+                const isDisabled =
+                    (maxYear !== null && item > maxYear) || (minYear !== null && item < minYear);
+                const wrapperClass =
+                    typeof classNames?.year === "function"
+                        ? classNames.year({ year: item, isCurrent, isDisabled })
+                        : undefined;
+                const button = (
+                    <RoundedButton
+                        padding="py-3"
+                        onClick={() => {
+                            clickYear(item);
+                        }}
+                        active={isCurrent}
+                        disabled={isDisabled}
+                    >
+                        <>{item}</>
+                    </RoundedButton>
+                );
+                return wrapperClass ? (
+                    <div key={index} className={wrapperClass}>
+                        {button}
+                    </div>
+                ) : (
+                    <div key={index}>{button}</div>
+                );
+            })}
         </div>
     );
 };

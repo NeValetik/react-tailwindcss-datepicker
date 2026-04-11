@@ -12,7 +12,7 @@ import {
     dateIsSameOrBefore,
     isCurrentDay
 } from "../../libs/date";
-import { Period } from "../../types";
+import { DayClassNameInfo, Period } from "../../types";
 
 interface Props {
     days: {
@@ -38,7 +38,8 @@ const Days = (props: Props) => {
         changeDayHover,
         minDate,
         maxDate,
-        disabledDates
+        disabledDates,
+        classNames
     } = useContext(DatepickerContext);
 
     // Functions
@@ -253,6 +254,56 @@ const Days = (props: Props) => {
         [changeDayHover, changePeriod, checkIfHoverPeriodContainsDisabledPeriod, period]
     );
 
+    const resolveDayClass = useCallback(
+        (day: Date, type: "previous" | "current" | "next") => {
+            const defaultClassName = buttonClass(day, type);
+            if (typeof classNames?.day !== "function") {
+                return defaultClassName;
+            }
+
+            const isToday = isCurrentDay(day);
+            const isRangeStart = !!(period.start && dateIsSame(day, period.start, "date"));
+            const isRangeEnd = !!(period.end && dateIsSame(day, period.end, "date"));
+            const isSelected = type === "current" && (isRangeStart || isRangeEnd);
+
+            let isInRange = false;
+            if (period.start && period.end) {
+                isInRange = dateIsBetween(day, period.start, period.end, "day", {
+                    start: false,
+                    end: false
+                });
+            } else if (period.start && dayHover) {
+                isInRange = dateIsBetween(day, period.start, dayHover, "day", {
+                    start: false,
+                    end: false
+                });
+            } else if (period.end && dayHover) {
+                isInRange = dateIsBetween(day, dayHover, period.end, "day", {
+                    start: false,
+                    end: false
+                });
+            }
+
+            const isHovered = !!(dayHover && dateIsSame(day, dayHover, "date"));
+
+            const info: DayClassNameInfo = {
+                date: day,
+                type,
+                isToday,
+                isSelected,
+                isInRange,
+                isRangeStart,
+                isRangeEnd,
+                isHovered,
+                isDisabled: isDateDisabled(day),
+                defaultClassName
+            };
+
+            return classNames.day(info);
+        },
+        [buttonClass, classNames, dayHover, isDateDisabled, period.end, period.start]
+    );
+
     const handleClickDay = useCallback(
         (day: Date, type: "previous" | "current" | "next") => {
             function continueClick() {
@@ -295,13 +346,13 @@ const Days = (props: Props) => {
     );
 
     return (
-        <div className="grid grid-cols-7 gap-y-0.5 my-1">
+        <div className={classNames?.daysContainer ?? "grid grid-cols-7 gap-y-0.5 my-1"}>
             {days.previous.map((item, index) => (
                 <button
                     type="button"
                     key={index}
                     disabled={isDateDisabled(item)}
-                    className={`${buttonClass(item, "previous")}`}
+                    className={resolveDayClass(item, "previous")}
                     onClick={() => handleClickDay(item, "previous")}
                     onMouseOver={() => {
                         hoverDay(item);
@@ -316,7 +367,7 @@ const Days = (props: Props) => {
                     type="button"
                     key={index}
                     disabled={isDateDisabled(item)}
-                    className={`${buttonClass(item, "current")}`}
+                    className={resolveDayClass(item, "current")}
                     onClick={() => handleClickDay(item, "current")}
                     onMouseOver={() => {
                         hoverDay(item);
@@ -331,7 +382,7 @@ const Days = (props: Props) => {
                     type="button"
                     key={index}
                     disabled={isDateDisabled(item)}
-                    className={`${buttonClass(item, "next")}`}
+                    className={resolveDayClass(item, "next")}
                     onClick={() => handleClickDay(item, "next")}
                     onMouseOver={() => {
                         hoverDay(item);

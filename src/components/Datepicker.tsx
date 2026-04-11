@@ -401,12 +401,15 @@ const Datepicker = (props: DatepickerType) => {
     const popupClassNameOverload = useMemo(() => {
         const defaultPopupClassName =
             "transition-all ease-out duration-300 absolute z-10 mt-[1px] text-sm lg:text-xs 2xl:text-sm translate-y-4 opacity-0 hidden";
+        if (typeof classNames?.popup === "function") {
+            return classNames.popup(defaultPopupClassName);
+        }
         return typeof popupClassName === "function"
             ? popupClassName(defaultPopupClassName)
             : typeof popupClassName === "string" && popupClassName !== ""
               ? popupClassName
               : defaultPopupClassName;
-    }, [popupClassName]);
+    }, [popupClassName, classNames]);
 
     return (
         <DatepickerContext.Provider value={contextValues}>

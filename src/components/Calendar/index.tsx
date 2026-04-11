@@ -57,7 +57,8 @@ const Calendar = (props: Props) => {
         asSingle,
         i18n,
         startWeekOn,
-        input
+        input,
+        classNames
     } = useContext(DatepickerContext);
     loadLanguageModule(i18n);
 
@@ -238,11 +239,15 @@ const Calendar = (props: Props) => {
         };
     }, [maxDate, minDate]);
 
+    const defaultCalendarContainerClass = "w-full md:w-[296px] md:min-w-[296px]";
+    const defaultCalendarHeaderClass =
+        "flex items-center space-x-1.5 border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1.5";
+
     return (
-        <div className="w-full md:w-[296px] md:min-w-[296px]">
-            <div className="flex items-center space-x-1.5 border border-gray-300 dark:border-gray-700 rounded-md px-2 py-1.5">
+        <div className={classNames?.calendarContainer ?? defaultCalendarContainerClass}>
+            <div className={classNames?.calendarHeader ?? defaultCalendarHeaderClass}>
                 {!showMonths && !showYears && (
-                    <div className="flex-none">
+                    <div className={classNames?.prevButton ?? "flex-none"}>
                         <RoundedButton roundedFull={true} onClick={onClickPrevious}>
                             <ChevronLeftIcon className="h-5 w-5" />
                         </RoundedButton>
@@ -250,7 +255,7 @@ const Calendar = (props: Props) => {
                 )}
 
                 {showYears && (
-                    <div className="flex-none">
+                    <div className={classNames?.prevButton ?? "flex-none"}>
                         <RoundedButton
                             roundedFull={true}
                             onClick={() => {
@@ -263,7 +268,7 @@ const Calendar = (props: Props) => {
                 )}
 
                 <div className="flex flex-1 items-center space-x-1.5">
-                    <div className="w-1/2">
+                    <div className={classNames?.monthButton ?? "w-1/2"}>
                         <RoundedButton
                             onClick={() => {
                                 setShowMonths(!showMonths);
@@ -274,7 +279,7 @@ const Calendar = (props: Props) => {
                         </RoundedButton>
                     </div>
 
-                    <div className="w-1/2">
+                    <div className={classNames?.yearButton ?? "w-1/2"}>
                         <RoundedButton
                             onClick={() => {
                                 setShowYears(!showYears);
@@ -287,7 +292,7 @@ const Calendar = (props: Props) => {
                 </div>
 
                 {showYears && (
-                    <div className="flex-none">
+                    <div className={classNames?.nextButton ?? "flex-none"}>
                         <RoundedButton
                             roundedFull={true}
                             onClick={() => {
@@ -300,7 +305,7 @@ const Calendar = (props: Props) => {
                 )}
 
                 {!showMonths && !showYears && (
-                    <div className="flex-none">
+                    <div className={classNames?.nextButton ?? "flex-none"}>
                         <RoundedButton roundedFull={true} onClick={onClickNext}>
                             <ChevronRightIcon className="h-5 w-5" />
                         </RoundedButton>

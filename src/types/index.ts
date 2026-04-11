@@ -46,11 +46,76 @@ export type DateValueType = DateRangeType | null;
 
 export type ClassNameType = ((className: string) => string) | string | null;
 
+export interface DayClassNameInfo {
+    date: Date;
+    type: "previous" | "current" | "next";
+    isToday: boolean;
+    isSelected: boolean;
+    isInRange: boolean;
+    isRangeStart: boolean;
+    isRangeEnd: boolean;
+    isHovered: boolean;
+    isDisabled: boolean;
+    defaultClassName: string;
+}
+
+export interface WeekDayClassNameInfo {
+    dayName: string;
+    index: number;
+}
+
+export interface MonthClassNameInfo {
+    month: number;
+    isCurrent: boolean;
+    isDisabled: boolean;
+}
+
+export interface YearClassNameInfo {
+    year: number;
+    isCurrent: boolean;
+    isDisabled: boolean;
+}
+
+export interface ShortcutItemClassNameInfo {
+    key: string;
+    text: string;
+    defaultClassName: string;
+}
+
 export type ClassNamesTypeProp = {
     container?: (p?: object | null | undefined) => string | undefined;
     input?: (p?: object | null | undefined) => string | undefined;
     toggleButton?: (p?: object | null | undefined) => string | undefined;
     footer?: (p?: object | null | undefined) => string | undefined;
+
+    // popup / calendar shell
+    popup?: (defaultClassName: string) => string;
+    calendarContainer?: string;
+    calendarHeader?: string;
+    prevButton?: string;
+    nextButton?: string;
+    monthButton?: string;
+    yearButton?: string;
+
+    // week header
+    weekContainer?: string;
+    weekDay?: (info: WeekDayClassNameInfo) => string;
+
+    // days grid
+    daysContainer?: string;
+    day?: (info: DayClassNameInfo) => string;
+
+    // month picker
+    monthsContainer?: string;
+    month?: (info: MonthClassNameInfo) => string;
+
+    // year picker
+    yearsContainer?: string;
+    year?: (info: YearClassNameInfo) => string;
+
+    // shortcuts sidebar
+    shortcutsContainer?: string;
+    shortcutItem?: (info: ShortcutItemClassNameInfo) => string;
 };
 
 export type PopoverDirectionType = "up" | "down";

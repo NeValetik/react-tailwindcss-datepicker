@@ -6,7 +6,7 @@ import { shortString, ucFirst } from "../../helpers";
 import { dateFormat, loadLanguageModule } from "../../libs/date";
 
 const Week = () => {
-    const { i18n, startWeekOn } = useContext(DatepickerContext);
+    const { i18n, startWeekOn, classNames } = useContext(DatepickerContext);
 
     useEffect(() => {
         loadLanguageModule(i18n);
@@ -36,21 +36,29 @@ const Week = () => {
         return 0;
     }, [startWeekOn]);
 
+    const defaultWeekContainerClass =
+        "grid grid-cols-7 border-b border-gray-300 dark:border-gray-700 py-2";
+    const defaultWeekDayClass = "tracking-wide text-gray-500 text-center";
+
     return (
-        <div className="grid grid-cols-7 border-b border-gray-300 dark:border-gray-700 py-2">
-            {DAYS.map(item => (
-                <div key={item} className="tracking-wide text-gray-500 text-center">
-                    {ucFirst(
-                        shortString(
-                            dateFormat(
-                                new Date(2022, 10, 6 + item + startDateModifier),
-                                "ddd",
-                                i18n
-                            ) || ""
-                        )
-                    )}
-                </div>
-            ))}
+        <div className={classNames?.weekContainer ?? defaultWeekContainerClass}>
+            {DAYS.map((item, index) => {
+                const dayName = ucFirst(
+                    shortString(
+                        dateFormat(new Date(2022, 10, 6 + item + startDateModifier), "ddd", i18n) ||
+                            ""
+                    )
+                );
+                const cellClass =
+                    typeof classNames?.weekDay === "function"
+                        ? classNames.weekDay({ dayName, index })
+                        : defaultWeekDayClass;
+                return (
+                    <div key={item} className={cellClass}>
+                        {dayName}
+                    </div>
+                );
+            })}
         </div>
     );
 };

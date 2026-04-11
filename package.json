@@ -1,7 +1,7 @@
 {
-    "name": "react-tailwindcss-datepicker",
-    "version": "2.0.0",
-    "description": "A modern React Datepicker using Tailwind CSS 3",
+    "name": "react-tailwindcss-daypicker-styles-exposed",
+    "version": "0.1.0",
+    "description": "Fork of react-tailwindcss-datepicker that exposes per-day / per-cell classNames for full calendar styling control",
     "main": "dist/index.cjs.js",
     "module": "dist/index.esm.js",
     "types": "dist/index.d.ts",
@@ -33,7 +33,9 @@
         "react-daterangepicker",
         "date-range",
         "date-range-picker",
-        "tailwind-daterange-picker"
+        "tailwind-daterange-picker",
+        "styles-exposed",
+        "custom-classnames"
     ],
     "peerDependencies": {
         "dayjs": "^1.11.12",

@@ -9,6 +9,7 @@ import { Period, ShortcutsItem } from "../types";
 interface ItemTemplateProps {
     children: ReactNode;
     key: number;
+    shortcutKey: string;
     item: ShortcutsItem | ShortcutsItem[];
 }
 
@@ -22,15 +23,27 @@ const ItemTemplate = memo((props: ItemTemplateProps) => {
         changeDayHover,
         hideDatepicker,
         changeDatepickerValue,
-        input
+        input,
+        classNames
     } = useContext(DatepickerContext);
 
     // Functions
     const getClassName = useCallback(() => {
         const textColor = TEXT_COLOR["600"][primaryColor as keyof (typeof TEXT_COLOR)["600"]];
         const textColorHover = TEXT_COLOR.hover[primaryColor as keyof typeof TEXT_COLOR.hover];
-        return `whitespace-nowrap w-1/2 md:w-1/3 lg:w-auto transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/10 p-2 rounded cursor-pointer ${textColor} ${textColorHover}`;
-    }, [primaryColor]);
+        const defaultClassName = `whitespace-nowrap w-1/2 md:w-1/3 lg:w-auto transition-all duration-300 hover:bg-gray-100 dark:hover:bg-white/10 p-2 rounded cursor-pointer ${textColor} ${textColorHover}`;
+
+        if (typeof classNames?.shortcutItem === "function") {
+            const singleItem = Array.isArray(props.item) ? props.item[0] : props.item;
+            return classNames.shortcutItem({
+                key: props.shortcutKey,
+                text: singleItem?.text ?? "",
+                defaultClassName
+            });
+        }
+
+        return defaultClassName;
+    }, [primaryColor, classNames, props.item, props.shortcutKey]);
 
     const chosePeriod = useCallback(
         (item: Period) => {
@@ -88,7 +101,7 @@ ItemTemplate.displayName = "ItemTemplate";
 
 const Shortcuts = () => {
     // Contexts
-    const { configs } = useContext(DatepickerContext);
+    const { configs, classNames } = useContext(DatepickerContext);
 
     const callPastFunction = useCallback((data: unknown, numberValue: number) => {
         return typeof data === "function" ? data(numberValue) : null;
@@ -136,12 +149,17 @@ const Shortcuts = () => {
     }, []);
 
     return shortcutOptions?.length ? (
-        <div className="md:border-b mb-3 lg:mb-0 lg:border-r lg:border-b-0 border-gray-300 dark:border-gray-700 pr-1">
+        <div
+            className={
+                classNames?.shortcutsContainer ??
+                "md:border-b mb-3 lg:mb-0 lg:border-r lg:border-b-0 border-gray-300 dark:border-gray-700 pr-1"
+            }
+        >
             <ul className="w-full tracking-wide flex flex-wrap lg:flex-col pb-1 lg:pb-0">
                 {shortcutOptions.map(([key, item], index) =>
                     Array.isArray(item) ? (
                         item.map((item, index) => (
-                            <ItemTemplate key={index} item={item}>
+                            <ItemTemplate key={index} shortcutKey={key} item={item}>
                                 <>
                                     {key === "past" &&
                                     configs?.shortcuts &&
@@ -156,7 +174,7 @@ const Shortcuts = () => {
                             </ItemTemplate>
                         ))
                     ) : (
-                        <ItemTemplate key={index} item={item}>
+                        <ItemTemplate key={index} shortcutKey={key} item={item}>
                             <>
                                 {configs?.shortcuts && key in configs.shortcuts
                                     ? typeof configs.shortcuts[
