@@ -1,5 +1,35 @@
 # React Tailwindcss Datepicker
 
+> **Fork notice** — this package (`react-tailwindcss-daypicker-styles-exposed`) is a fork of
+> [`react-tailwindcss-datepicker`](https://github.com/onesine/react-tailwindcss-datepicker) by
+> [onesine](https://github.com/onesine). It extends the `classNames` prop with additional slots
+> that expose the internals of the calendar — popup, calendar container/header, prev/next/month/year
+> buttons, week header, **per-day callback** (with `isToday` / `isSelected` / `isInRange` /
+> `isRangeStart` / `isRangeEnd` / `isHovered` / `isDisabled` / `defaultClassName`), month picker,
+> year picker and shortcuts sidebar — giving you full control over the calendar styling,
+> including per-cell customization during range selection. The public API is otherwise unchanged
+> and backwards compatible with the upstream package. All credit for the original component goes
+> to the upstream author; this fork only adds the extended `classNames` surface.
+>
+> Example:
+> ```tsx
+> <Datepicker
+>   value={value}
+>   onChange={setValue}
+>   classNames={{
+>     day: ({ isRangeStart, isRangeEnd, isInRange, defaultClassName }) => {
+>       const base = "flex items-center justify-center w-10 h-10";
+>       if (isRangeStart) return `${base} bg-emerald-600 text-white rounded-l-full`;
+>       if (isRangeEnd)   return `${base} bg-emerald-600 text-white rounded-r-full`;
+>       if (isInRange)    return `${base} bg-emerald-100 text-emerald-900`;
+>       return defaultClassName;
+>     },
+>     weekDay: ({ index }) =>
+>       `text-center ${index >= 5 ? "text-red-400" : "text-gray-500"}`
+>   }}
+> />
+> ```
+
 <p align="center">
     <a href="https://react-tailwindcss-datepicker.vercel.app/" target="_blank">
       <img alt="React Tailwindcss Datepicker" width="100" style="border-radius: 100%;" src="https://raw.githubusercontent.com/onesine/react-tailwindcss-datepicker/master/assets/img/calendar_logo.svg?raw=true">
