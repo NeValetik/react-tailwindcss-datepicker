@@ -126,6 +126,8 @@ export type WeekDaysIndexType = (typeof DAYS)[number];
 
 export type DateLookingType = (typeof DATE_LOOKING_OPTIONS)[number];
 
+export type WeekDayLengthType = 1 | 2 | 3 | "full";
+
 export interface DatepickerType {
     primaryColor?: ColorKeys;
     value: DateValueType;
@@ -157,6 +159,7 @@ export interface DatepickerType {
     startWeekOn?: WeekStringType;
     popoverDirection?: PopoverDirectionType;
     required?: boolean;
+    weekDayLength?: WeekDayLengthType;
 }
 
 export type ColorKeys = (typeof COLORS)[number]; // "blue" | "orange"

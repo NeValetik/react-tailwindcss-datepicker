@@ -18,7 +18,8 @@ import {
     PopoverDirectionType,
     ColorKeys,
     WeekStringType,
-    DateLookingType
+    DateLookingType,
+    WeekDayLengthType
 } from "../types";
 
 interface DatepickerStore {
@@ -63,6 +64,7 @@ interface DatepickerStore {
 
     showFooter?: boolean;
     startWeekOn?: WeekStringType | null;
+    weekDayLength?: WeekDayLengthType;
     setInput: (value: HTMLInputElement | null) => void;
 
     toggleClassName?: ((className: string) => string) | string | null;
@@ -116,6 +118,7 @@ const DatepickerContext = createContext<DatepickerStore>({
     separator: DEFAULT_SEPARATOR,
     showFooter: false,
     startWeekOn: START_WEEK,
+    weekDayLength: 2,
     setInput: () => {},
 
     toggleClassName: "",

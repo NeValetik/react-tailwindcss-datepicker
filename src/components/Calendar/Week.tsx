@@ -6,7 +6,7 @@ import { shortString, ucFirst } from "../../helpers";
 import { dateFormat, loadLanguageModule } from "../../libs/date";
 
 const Week = () => {
-    const { i18n, startWeekOn, classNames } = useContext(DatepickerContext);
+    const { i18n, startWeekOn, classNames, weekDayLength } = useContext(DatepickerContext);
 
     useEffect(() => {
         loadLanguageModule(i18n);
@@ -43,11 +43,11 @@ const Week = () => {
     return (
         <div className={classNames?.weekContainer ?? defaultWeekContainerClass}>
             {DAYS.map((item, index) => {
+                const fullDayName =
+                    dateFormat(new Date(2022, 10, 6 + item + startDateModifier), "ddd", i18n) || "";
+                const length = weekDayLength ?? 2;
                 const dayName = ucFirst(
-                    shortString(
-                        dateFormat(new Date(2022, 10, 6 + item + startDateModifier), "ddd", i18n) ||
-                            ""
-                    )
+                    length === "full" ? fullDayName : shortString(fullDayName, length)
                 );
                 const cellClass =
                     typeof classNames?.weekDay === "function"
