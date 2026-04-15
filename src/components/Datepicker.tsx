@@ -297,7 +297,8 @@ const Datepicker = (props: DatepickerType) => {
                 position: "fixed",
                 top: rect.bottom,
                 left: rect.left,
-                width: rect.width
+                width: "max-content",
+                maxWidth: `calc(100vw - ${rect.left}px)`
             });
         };
 

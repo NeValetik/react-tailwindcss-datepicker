@@ -73,6 +73,7 @@ export default function Playground() {
                     useRange={useRange}
                     showFooter={showFooter}
                     showShortcuts={showShortcuts}
+                    portalContainer={document.body}
                     configs={{
                         shortcuts: {
                             today: "Today",
