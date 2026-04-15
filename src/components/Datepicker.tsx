@@ -1,4 +1,13 @@
-import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+    CSSProperties,
+    MouseEvent as ReactMouseEvent,
+    PointerEvent as ReactPointerEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import { createPortal } from "react-dom";
 
 import Calendar from "../components/Calendar";
@@ -474,11 +483,19 @@ const Datepicker = (props: DatepickerType) => {
               : defaultPopupClassName;
     }, [popupClassName, classNames]);
 
+    const stopPortaledPropagation = portalContainer
+        ? {
+              onMouseDown: (e: ReactMouseEvent) => e.stopPropagation(),
+              onPointerDown: (e: ReactPointerEvent) => e.stopPropagation()
+          }
+        : {};
+
     const popup = (
         <div
             className={popupClassNameOverload}
             ref={calendarContainerRef}
             style={portalContainer ? portalStyle : undefined}
+            {...stopPortaledPropagation}
         >
             {/* <Arrow ref={arrowRef} /> */}
 
