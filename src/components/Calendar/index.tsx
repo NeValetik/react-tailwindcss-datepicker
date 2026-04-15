@@ -58,7 +58,15 @@ const Calendar = (props: Props) => {
         i18n,
         startWeekOn,
         input,
-        classNames
+        classNames,
+        chevronLeftIcon,
+        chevronRightIcon,
+        doubleChevronLeftIcon,
+        doubleChevronRightIcon,
+        renderPrevButton,
+        renderNextButton,
+        renderDoublePrevButton,
+        renderDoubleNextButton
     } = useContext(DatepickerContext);
     loadLanguageModule(i18n);
 
@@ -248,22 +256,40 @@ const Calendar = (props: Props) => {
             <div className={classNames?.calendarHeader ?? defaultCalendarHeaderClass}>
                 {!showMonths && !showYears && (
                     <div className={classNames?.prevButton ?? "flex-none"}>
-                        <RoundedButton roundedFull={true} onClick={onClickPrevious}>
-                            <ChevronLeftIcon className="h-5 w-5" />
-                        </RoundedButton>
+                        {renderPrevButton ? (
+                            renderPrevButton({
+                                onClick: onClickPrevious,
+                                children: chevronLeftIcon ?? <ChevronLeftIcon className="h-5 w-5" />
+                            })
+                        ) : (
+                            <RoundedButton roundedFull={true} onClick={onClickPrevious}>
+                                {chevronLeftIcon ?? <ChevronLeftIcon className="h-5 w-5" />}
+                            </RoundedButton>
+                        )}
                     </div>
                 )}
 
                 {showYears && (
                     <div className={classNames?.prevButton ?? "flex-none"}>
-                        <RoundedButton
-                            roundedFull={true}
-                            onClick={() => {
-                                setYear(year - NUMBER_YEARS_SHOW);
-                            }}
-                        >
-                            <DoubleChevronLeftIcon className="h-5 w-5" />
-                        </RoundedButton>
+                        {renderDoublePrevButton ? (
+                            renderDoublePrevButton({
+                                onClick: () => setYear(year - NUMBER_YEARS_SHOW),
+                                children: doubleChevronLeftIcon ?? (
+                                    <DoubleChevronLeftIcon className="h-5 w-5" />
+                                )
+                            })
+                        ) : (
+                            <RoundedButton
+                                roundedFull={true}
+                                onClick={() => {
+                                    setYear(year - NUMBER_YEARS_SHOW);
+                                }}
+                            >
+                                {doubleChevronLeftIcon ?? (
+                                    <DoubleChevronLeftIcon className="h-5 w-5" />
+                                )}
+                            </RoundedButton>
+                        )}
                     </div>
                 )}
 
@@ -293,22 +319,42 @@ const Calendar = (props: Props) => {
 
                 {showYears && (
                     <div className={classNames?.nextButton ?? "flex-none"}>
-                        <RoundedButton
-                            roundedFull={true}
-                            onClick={() => {
-                                setYear(year + NUMBER_YEARS_SHOW);
-                            }}
-                        >
-                            <DoubleChevronRightIcon className="h-5 w-5" />
-                        </RoundedButton>
+                        {renderDoubleNextButton ? (
+                            renderDoubleNextButton({
+                                onClick: () => setYear(year + NUMBER_YEARS_SHOW),
+                                children: doubleChevronRightIcon ?? (
+                                    <DoubleChevronRightIcon className="h-5 w-5" />
+                                )
+                            })
+                        ) : (
+                            <RoundedButton
+                                roundedFull={true}
+                                onClick={() => {
+                                    setYear(year + NUMBER_YEARS_SHOW);
+                                }}
+                            >
+                                {doubleChevronRightIcon ?? (
+                                    <DoubleChevronRightIcon className="h-5 w-5" />
+                                )}
+                            </RoundedButton>
+                        )}
                     </div>
                 )}
 
                 {!showMonths && !showYears && (
                     <div className={classNames?.nextButton ?? "flex-none"}>
-                        <RoundedButton roundedFull={true} onClick={onClickNext}>
-                            <ChevronRightIcon className="h-5 w-5" />
-                        </RoundedButton>
+                        {renderNextButton ? (
+                            renderNextButton({
+                                onClick: onClickNext,
+                                children: chevronRightIcon ?? (
+                                    <ChevronRightIcon className="h-5 w-5" />
+                                )
+                            })
+                        ) : (
+                            <RoundedButton roundedFull={true} onClick={onClickNext}>
+                                {chevronRightIcon ?? <ChevronRightIcon className="h-5 w-5" />}
+                            </RoundedButton>
+                        )}
                     </div>
                 )}
             </div>

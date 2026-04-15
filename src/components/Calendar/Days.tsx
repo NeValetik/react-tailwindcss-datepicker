@@ -14,6 +14,8 @@ import {
 } from "../../libs/date";
 import { DayClassNameInfo, Period } from "../../types";
 
+import TodayDayContent from "./TodayDayContent";
+
 interface Props {
     days: {
         previous: Date[];
@@ -175,6 +177,26 @@ const Days = (props: Props) => {
         [isDateTooEarly, isDateTooLate, disabledDates]
     );
 
+    const shouldShowTodayUnderline = useCallback(
+        (day: Date, type: "current" | "next" | "previous") => {
+            if (type !== "current" || !isCurrentDay(day) || isDateDisabled(day)) {
+                return false;
+            }
+            if (activeDateData(day).active) {
+                return false;
+            }
+            if (
+                dayHover &&
+                dateIsSame(dayHover, day, "date") &&
+                ((period.start && !period.end) || (!period.start && period.end))
+            ) {
+                return false;
+            }
+            return true;
+        },
+        [activeDateData, dayHover, isDateDisabled, period.end, period.start]
+    );
+
     const buttonClass = useCallback(
         (day: Date, type: "current" | "next" | "previous") => {
             const baseClass = "flex items-center justify-center w-12 h-12 lg:w-10 lg:h-10";
@@ -257,6 +279,7 @@ const Days = (props: Props) => {
     const resolveDayClass = useCallback(
         (day: Date, type: "previous" | "current" | "next") => {
             const defaultClassName = buttonClass(day, type);
+
             if (typeof classNames?.day !== "function") {
                 return defaultClassName;
             }
@@ -358,7 +381,11 @@ const Days = (props: Props) => {
                         hoverDay(item);
                     }}
                 >
-                    {item.getDate()}
+                    {shouldShowTodayUnderline(item, "previous") ? (
+                        <TodayDayContent>{item.getDate()}</TodayDayContent>
+                    ) : (
+                        item.getDate()
+                    )}
                 </button>
             ))}
 
@@ -373,7 +400,11 @@ const Days = (props: Props) => {
                         hoverDay(item);
                     }}
                 >
-                    {item.getDate()}
+                    {shouldShowTodayUnderline(item, "current") ? (
+                        <TodayDayContent>{item.getDate()}</TodayDayContent>
+                    ) : (
+                        item.getDate()
+                    )}
                 </button>
             ))}
 
@@ -388,7 +419,11 @@ const Days = (props: Props) => {
                         hoverDay(item);
                     }}
                 >
-                    {item.getDate()}
+                    {shouldShowTodayUnderline(item, "next") ? (
+                        <TodayDayContent>{item.getDate()}</TodayDayContent>
+                    ) : (
+                        item.getDate()
+                    )}
                 </button>
             ))}
         </div>

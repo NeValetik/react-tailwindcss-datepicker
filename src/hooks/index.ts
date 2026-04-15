@@ -2,11 +2,16 @@ import { useEffect } from "react";
 
 export default function useOnClickOutside(
     ref: HTMLDivElement | null,
-    handler: (e?: MouseEvent | TouchEvent) => void
+    handler: (e?: MouseEvent | TouchEvent) => void,
+    extraRef?: HTMLDivElement | null
 ) {
     useEffect(() => {
         const listener = (event: MouseEvent | TouchEvent) => {
-            if (!ref || ref.contains(event.target as Node)) {
+            const target = event.target as Node;
+            if (!ref || ref.contains(target)) {
+                return;
+            }
+            if (extraRef && extraRef.contains(target)) {
                 return;
             }
 
@@ -20,5 +25,5 @@ export default function useOnClickOutside(
             document.removeEventListener("mousedown", listener);
             document.removeEventListener("touchstart", listener);
         };
-    }, [ref, handler]);
+    }, [ref, handler, extraRef]);
 }

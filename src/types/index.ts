@@ -160,6 +160,20 @@ export interface DatepickerType {
     popoverDirection?: PopoverDirectionType;
     required?: boolean;
     weekDayLength?: WeekDayLengthType;
+    portalContainer?: HTMLElement | null;
+    chevronLeftIcon?: ReactNode;
+    chevronRightIcon?: ReactNode;
+    doubleChevronLeftIcon?: ReactNode;
+    doubleChevronRightIcon?: ReactNode;
+    renderPrevButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderDoublePrevButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderDoubleNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
+}
+
+export interface ChevronButtonRenderProps {
+    onClick: () => void;
+    children: ReactNode;
 }
 
 export type ColorKeys = (typeof COLORS)[number]; // "blue" | "orange"

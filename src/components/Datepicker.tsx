@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import Calendar from "../components/Calendar";
 import Footer from "../components/Footer";
@@ -29,8 +30,7 @@ import {
 } from "../libs/date";
 import { Period, DatepickerType, ColorKeys, DateType } from "../types";
 
-import Arrow from "./icons/Arrow";
-import VerticalDash from "./VerticalDash";
+// import Arrow from "./icons/Arrow";
 
 const Datepicker = (props: DatepickerType) => {
     // Props
@@ -75,13 +75,22 @@ const Datepicker = (props: DatepickerType) => {
 
         useRange = true,
         value = null,
-        weekDayLength = 2
+        weekDayLength = 2,
+        portalContainer = null,
+        chevronLeftIcon = undefined,
+        chevronRightIcon = undefined,
+        doubleChevronLeftIcon = undefined,
+        doubleChevronRightIcon = undefined,
+        renderPrevButton = undefined,
+        renderNextButton = undefined,
+        renderDoublePrevButton = undefined,
+        renderDoubleNextButton = undefined
     } = props;
 
     // Refs
     const containerRef = useRef<HTMLDivElement | null>(null);
     const calendarContainerRef = useRef<HTMLDivElement | null>(null);
-    const arrowRef = useRef<HTMLDivElement | null>(null);
+    // const arrowRef = useRef<HTMLDivElement | null>(null);
 
     // States
     const [firstDate, setFirstDate] = useState<Date>(
@@ -96,19 +105,25 @@ const Datepicker = (props: DatepickerType) => {
     const [inputText, setInputText] = useState<string>("");
     const [input, setInput] = useState<HTMLInputElement | null>(null);
 
+    const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
+
     // Custom Hooks use
-    useOnClickOutside(containerRef.current, () => {
-        const container = containerRef.current;
-        if (container) {
-            hideDatepicker();
-        }
-    });
+    useOnClickOutside(
+        containerRef.current,
+        () => {
+            const container = containerRef.current;
+            if (container) {
+                hideDatepicker();
+            }
+        },
+        portalContainer ? calendarContainerRef.current : null
+    );
 
     // Functions
     const hideDatepicker = useCallback(() => {
         const div = calendarContainerRef.current;
-        const arrow = arrowRef.current;
-        if (arrow && div && div.classList.contains("block")) {
+        // const arrow = arrowRef.current;
+        if (div && div.classList.contains("block")) {
             div.classList.remove("block");
             div.classList.remove("translate-y-0");
             div.classList.remove("opacity-1");
@@ -119,11 +134,13 @@ const Datepicker = (props: DatepickerType) => {
                 div.classList.add("hidden");
                 div.classList.add("mb-2.5");
                 div.classList.add("mt-2.5");
-                arrow.classList.remove("-bottom-2");
-                arrow.classList.remove("border-r");
-                arrow.classList.remove("border-b");
-                arrow.classList.add("border-l");
-                arrow.classList.add("border-t");
+                // if (arrow) {
+                //     arrow.classList.remove("-bottom-2");
+                //     arrow.classList.remove("border-r");
+                //     arrow.classList.remove("border-b");
+                //     arrow.classList.add("border-l");
+                //     arrow.classList.add("border-t");
+                // }
             }, 300);
         }
     }, []);
@@ -198,23 +215,23 @@ const Datepicker = (props: DatepickerType) => {
     /* End Second */
 
     // UseEffects & UseLayoutEffect
-    useEffect(() => {
-        const container = containerRef.current;
-        const calendarContainer = calendarContainerRef.current;
-        const arrow = arrowRef.current;
+    // useEffect(() => {
+    //     const container = containerRef.current;
+    //     const calendarContainer = calendarContainerRef.current;
+    //     const arrow = arrowRef.current;
 
-        if (container && calendarContainer && arrow) {
-            const detail = container.getBoundingClientRect();
-            const screenCenter = window.innerWidth / 2;
-            const containerCenter = (detail.right - detail.x) / 2 + detail.x;
+    //     if (container && calendarContainer && arrow) {
+    //         const detail = container.getBoundingClientRect();
+    //         const screenCenter = window.innerWidth / 2;
+    //         const containerCenter = (detail.right - detail.x) / 2 + detail.x;
 
-            if (containerCenter > screenCenter) {
-                arrow.classList.add("right-0");
-                arrow.classList.add("mr-3.5");
-                calendarContainer.classList.add("right-0");
-            }
-        }
-    }, []);
+    //         if (containerCenter > screenCenter) {
+    //             arrow.classList.add("right-0");
+    //             arrow.classList.add("mr-3.5");
+    //             calendarContainer.classList.add("right-0");
+    //         }
+    //     }
+    // }, []);
 
     useEffect(() => {
         if (value && value.startDate && value.endDate) {
@@ -270,6 +287,31 @@ const Datepicker = (props: DatepickerType) => {
     }, [asSingle, startFrom, value]);
 
     useEffect(() => {
+        if (!portalContainer) return;
+
+        const updatePosition = () => {
+            const container = containerRef.current;
+            if (!container) return;
+            const rect = container.getBoundingClientRect();
+            setPortalStyle({
+                position: "fixed",
+                top: rect.bottom,
+                left: rect.left,
+                width: rect.width
+            });
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition, true);
+        window.addEventListener("resize", updatePosition);
+
+        return () => {
+            window.removeEventListener("scroll", updatePosition, true);
+            window.removeEventListener("resize", updatePosition);
+        };
+    }, [portalContainer]);
+
+    useEffect(() => {
         const handleEscapeKey = (event: KeyboardEvent) => {
             const container = calendarContainerRef.current;
 
@@ -315,7 +357,8 @@ const Datepicker = (props: DatepickerType) => {
         }
 
         return {
-            arrowContainer: arrowRef,
+            arrowContainer: null,
+            // arrowContainer: arrowRef,
             asSingle,
             calendarContainer: calendarContainerRef,
             changeDatepickerValue: onChange,
@@ -354,7 +397,15 @@ const Datepicker = (props: DatepickerType) => {
             toggleIcon,
             updateFirstDate: (newDate: Date) => firstGotoDate(newDate),
             value,
-            weekDayLength
+            weekDayLength,
+            chevronLeftIcon,
+            chevronRightIcon,
+            doubleChevronLeftIcon,
+            doubleChevronRightIcon,
+            renderPrevButton,
+            renderNextButton,
+            renderDoublePrevButton,
+            renderDoubleNextButton
         };
     }, [
         minDate,
@@ -389,7 +440,15 @@ const Datepicker = (props: DatepickerType) => {
         toggleIcon,
         value,
         weekDayLength,
-        firstGotoDate
+        firstGotoDate,
+        chevronLeftIcon,
+        chevronRightIcon,
+        doubleChevronLeftIcon,
+        doubleChevronRightIcon,
+        renderPrevButton,
+        renderNextButton,
+        renderDoublePrevButton,
+        renderDoubleNextButton
     ]);
 
     const containerClassNameOverload = useMemo(() => {
@@ -414,56 +473,57 @@ const Datepicker = (props: DatepickerType) => {
               : defaultPopupClassName;
     }, [popupClassName, classNames]);
 
+    const popup = (
+        <div
+            className={popupClassNameOverload}
+            ref={calendarContainerRef}
+            style={portalContainer ? portalStyle : undefined}
+        >
+            {/* <Arrow ref={arrowRef} /> */}
+
+            <div className="mt-2.5 shadow-sm border border-gray-300 px-1 py-0.5 bg-white dark:bg-slate-800 dark:text-white dark:border-slate-600 rounded-lg">
+                <div className="flex flex-col lg:flex-row py-2">
+                    {showShortcuts && <Shortcuts />}
+
+                    <div
+                        className={`flex items-stretch flex-col md:flex-row space-y-4 md:space-y-0 md:gap-x-4 ${
+                            showShortcuts ? "md:pl-2" : "md:pl-1"
+                        } pr-2 lg:pr-1`}
+                    >
+                        <Calendar
+                            date={firstDate}
+                            onClickPrevious={previousMonthFirst}
+                            onClickNext={nextMonthFirst}
+                            changeMonth={changeFirstMonth}
+                            changeYear={changeFirstYear}
+                            minDate={minDate}
+                            maxDate={maxDate}
+                        />
+
+                        {useRange && (
+                            <Calendar
+                                date={secondDate}
+                                onClickPrevious={previousMonthSecond}
+                                onClickNext={nextMonthSecond}
+                                changeMonth={changeSecondMonth}
+                                changeYear={changeSecondYear}
+                                minDate={minDate}
+                                maxDate={maxDate}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {showFooter && <Footer />}
+            </div>
+        </div>
+    );
+
     return (
         <DatepickerContext.Provider value={contextValues}>
             <div className={containerClassNameOverload} ref={containerRef}>
                 <Input />
-
-                <div className={popupClassNameOverload} ref={calendarContainerRef}>
-                    <Arrow ref={arrowRef} />
-
-                    <div className="mt-2.5 shadow-sm border border-gray-300 px-1 py-0.5 bg-white dark:bg-slate-800 dark:text-white dark:border-slate-600 rounded-lg">
-                        <div className="flex flex-col lg:flex-row py-2">
-                            {showShortcuts && <Shortcuts />}
-
-                            <div
-                                className={`flex items-stretch flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-1.5 ${
-                                    showShortcuts ? "md:pl-2" : "md:pl-1"
-                                } pr-2 lg:pr-1`}
-                            >
-                                <Calendar
-                                    date={firstDate}
-                                    onClickPrevious={previousMonthFirst}
-                                    onClickNext={nextMonthFirst}
-                                    changeMonth={changeFirstMonth}
-                                    changeYear={changeFirstYear}
-                                    minDate={minDate}
-                                    maxDate={maxDate}
-                                />
-
-                                {useRange && (
-                                    <>
-                                        <div className="flex items-center">
-                                            <VerticalDash />
-                                        </div>
-
-                                        <Calendar
-                                            date={secondDate}
-                                            onClickPrevious={previousMonthSecond}
-                                            onClickNext={nextMonthSecond}
-                                            changeMonth={changeSecondMonth}
-                                            changeYear={changeSecondYear}
-                                            minDate={minDate}
-                                            maxDate={maxDate}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        {showFooter && <Footer />}
-                    </div>
-                </div>
+                {portalContainer ? createPortal(popup, portalContainer) : popup}
             </div>
         </DatepickerContext.Provider>
     );

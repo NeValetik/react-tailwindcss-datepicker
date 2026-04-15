@@ -19,7 +19,8 @@ import {
     ColorKeys,
     WeekStringType,
     DateLookingType,
-    WeekDayLengthType
+    WeekDayLengthType,
+    ChevronButtonRenderProps
 } from "../types";
 
 interface DatepickerStore {
@@ -73,6 +74,15 @@ interface DatepickerStore {
     updateFirstDate: (date: Date) => void;
 
     value: DateValueType;
+
+    chevronLeftIcon?: ReactNode;
+    chevronRightIcon?: ReactNode;
+    doubleChevronLeftIcon?: ReactNode;
+    doubleChevronRightIcon?: ReactNode;
+    renderPrevButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderDoublePrevButton?: (props: ChevronButtonRenderProps) => ReactNode;
+    renderDoubleNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
 }
 
 const DatepickerContext = createContext<DatepickerStore>({
@@ -126,7 +136,16 @@ const DatepickerContext = createContext<DatepickerStore>({
 
     updateFirstDate: () => {},
 
-    value: null
+    value: null,
+
+    chevronLeftIcon: undefined,
+    chevronRightIcon: undefined,
+    doubleChevronLeftIcon: undefined,
+    doubleChevronRightIcon: undefined,
+    renderPrevButton: undefined,
+    renderNextButton: undefined,
+    renderDoublePrevButton: undefined,
+    renderDoubleNextButton: undefined
 });
 
 export default DatepickerContext;

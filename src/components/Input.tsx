@@ -15,7 +15,7 @@ const Input = () => {
         dayHover,
         changeDayHover,
         calendarContainer,
-        arrowContainer,
+        // arrowContainer,
         inputText,
         changeInputText,
         hideDatepicker,
@@ -218,10 +218,10 @@ const Input = () => {
     useEffect(() => {
         const div = calendarContainer?.current;
         const input = inputRef.current;
-        const arrow = arrowContainer?.current;
+        // const arrow = arrowContainer?.current;
 
         function showCalendarContainer() {
-            if (arrow && div && div.classList.contains("hidden")) {
+            if (div && div.classList.contains("hidden")) {
                 div.classList.remove("hidden");
                 div.classList.add("block");
 
@@ -237,11 +237,13 @@ const Input = () => {
                     div.classList.add("bottom-full");
                     div.classList.add("mb-2.5");
                     div.classList.remove("mt-2.5");
-                    arrow.classList.add("-bottom-2");
-                    arrow.classList.add("border-r");
-                    arrow.classList.add("border-b");
-                    arrow.classList.remove("border-l");
-                    arrow.classList.remove("border-t");
+                    // if (arrow) {
+                    //     arrow.classList.add("-bottom-2");
+                    //     arrow.classList.add("border-r");
+                    //     arrow.classList.add("border-b");
+                    //     arrow.classList.remove("border-l");
+                    //     arrow.classList.remove("border-t");
+                    // }
                 }
 
                 setTimeout(() => {
@@ -262,7 +264,7 @@ const Input = () => {
                 input.removeEventListener("focus", showCalendarContainer);
             }
         };
-    }, [calendarContainer, arrowContainer, popoverDirection]);
+    }, [calendarContainer, popoverDirection]);
 
     return (
         <>

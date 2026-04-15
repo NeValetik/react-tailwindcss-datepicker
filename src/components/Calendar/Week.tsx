@@ -36,8 +36,7 @@ const Week = () => {
         return 0;
     }, [startWeekOn]);
 
-    const defaultWeekContainerClass =
-        "grid grid-cols-7 border-b border-gray-300 dark:border-gray-700 py-2";
+    const defaultWeekContainerClass = "grid grid-cols-7 py-2";
     const defaultWeekDayClass = "tracking-wide text-gray-500 text-center";
 
     return (
