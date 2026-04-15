@@ -35,7 +35,9 @@ const Input = () => {
         popoverDirection,
         required,
         input,
-        setInput
+        setInput,
+        portalContainer,
+        updatePortalPosition
     } = useContext(DatepickerContext);
 
     // UseRefs
@@ -222,6 +224,10 @@ const Input = () => {
 
         function showCalendarContainer() {
             if (div && div.classList.contains("hidden")) {
+                if (portalContainer && updatePortalPosition) {
+                    updatePortalPosition();
+                    requestAnimationFrame(() => updatePortalPosition());
+                }
                 div.classList.remove("hidden");
                 div.classList.add("block");
 
@@ -264,7 +270,7 @@ const Input = () => {
                 input.removeEventListener("focus", showCalendarContainer);
             }
         };
-    }, [calendarContainer, popoverDirection]);
+    }, [calendarContainer, popoverDirection, portalContainer, updatePortalPosition]);
 
     return (
         <>

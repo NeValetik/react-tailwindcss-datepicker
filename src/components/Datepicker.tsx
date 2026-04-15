@@ -295,6 +295,8 @@ const Datepicker = (props: DatepickerType) => {
         }
     }, [asSingle, startFrom, value]);
 
+    const updatePortalPositionRef = useRef<() => void>(() => {});
+
     useEffect(() => {
         if (!portalContainer) return;
 
@@ -311,6 +313,7 @@ const Datepicker = (props: DatepickerType) => {
             });
         };
 
+        updatePortalPositionRef.current = updatePosition;
         updatePosition();
         window.addEventListener("scroll", updatePosition, true);
         window.addEventListener("resize", updatePosition);
@@ -415,7 +418,9 @@ const Datepicker = (props: DatepickerType) => {
             renderPrevButton,
             renderNextButton,
             renderDoublePrevButton,
-            renderDoubleNextButton
+            renderDoubleNextButton,
+            updatePortalPosition: () => updatePortalPositionRef.current(),
+            portalContainer
         };
     }, [
         minDate,
@@ -458,7 +463,8 @@ const Datepicker = (props: DatepickerType) => {
         renderPrevButton,
         renderNextButton,
         renderDoublePrevButton,
-        renderDoubleNextButton
+        renderDoubleNextButton,
+        portalContainer
     ]);
 
     const containerClassNameOverload = useMemo(() => {

@@ -83,6 +83,9 @@ interface DatepickerStore {
     renderNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
     renderDoublePrevButton?: (props: ChevronButtonRenderProps) => ReactNode;
     renderDoubleNextButton?: (props: ChevronButtonRenderProps) => ReactNode;
+
+    updatePortalPosition?: () => void;
+    portalContainer?: HTMLElement | null;
 }
 
 const DatepickerContext = createContext<DatepickerStore>({
@@ -145,7 +148,10 @@ const DatepickerContext = createContext<DatepickerStore>({
     renderPrevButton: undefined,
     renderNextButton: undefined,
     renderDoublePrevButton: undefined,
-    renderDoubleNextButton: undefined
+    renderDoubleNextButton: undefined,
+
+    updatePortalPosition: undefined,
+    portalContainer: null
 });
 
 export default DatepickerContext;

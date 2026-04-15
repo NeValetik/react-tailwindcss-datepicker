@@ -1,6 +1,6 @@
 {
     "name": "react-tailwindcss-datepicker-styles-exposed",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "Fork of react-tailwindcss-datepicker that exposes per-day / per-cell classNames for full calendar styling control",
     "main": "dist/index.cjs.js",
     "module": "dist/index.esm.js",
